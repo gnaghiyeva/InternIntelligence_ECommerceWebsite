@@ -3,6 +3,7 @@ package org.example.ecommerce.service.impl;
 import org.example.ecommerce.config.JwtUtil;
 import org.example.ecommerce.dtos.user.LoginDto;
 import org.example.ecommerce.dtos.user.RegisterDto;
+import org.example.ecommerce.dtos.user.UpdateRoleDto;
 import org.example.ecommerce.model.Role;
 import org.example.ecommerce.model.User;
 import org.example.ecommerce.repository.UserRepository;
@@ -54,6 +55,14 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email)
                 .map(User::getEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+    }
+
+    @Override
+    public String updateUserRole(UpdateRoleDto updateRoleDto) {
+        User user = userRepository.findByEmail(updateRoleDto.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + updateRoleDto.getEmail()));
+        user.setRole(updateRoleDto.getNewRole());
+        userRepository.save(user);
+        return "User role updated succesfully.";
     }
 
 }
