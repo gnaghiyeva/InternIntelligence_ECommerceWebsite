@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String registerUser(RegisterDto registerDto) {
-        if (userRepository.findByUsername(registerDto.getUsername()).isPresent()) {
+        if (userRepository.findByEmail(registerDto.getEmail()).isPresent()) {
             return "Email already exists!";
         }
         User user = new User();
@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String loginUser(LoginDto loginDto) {
-        Optional<User> user = userRepository.findByUsername(loginDto.getUsername());
+        Optional<User> user = userRepository.findByEmail(loginDto.getEmail());
 
         if (user.isPresent() && passwordEncoder.matches(loginDto.getPassword(), user.get().getPassword())) {
             return jwtUtil.generateToken(user.get().getEmail());
@@ -50,10 +50,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String getUserByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .map(User::getUsername)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+    public String getUserByUsername(String email) {
+        return userRepository.findByEmail(email)
+                .map(User::getEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
     }
 
 }
