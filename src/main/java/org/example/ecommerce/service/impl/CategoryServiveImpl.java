@@ -4,8 +4,10 @@ import org.example.ecommerce.dtos.category.CategoryCreateDto;
 import org.example.ecommerce.dtos.category.CategoryDto;
 import org.example.ecommerce.dtos.category.CategoryUpdateDto;
 import org.example.ecommerce.model.Category;
+import org.example.ecommerce.model.Product;
 import org.example.ecommerce.payload.ApiResponse;
 import org.example.ecommerce.repository.CategoryRepository;
+import org.example.ecommerce.repository.ProductRepository;
 import org.example.ecommerce.service.CategoryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,9 @@ public class CategoryServiveImpl implements CategoryService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @Override
     public ApiResponse addCategory(CategoryCreateDto categoryCreateDto) {
@@ -54,7 +59,7 @@ public class CategoryServiveImpl implements CategoryService {
             return new ApiResponse(false, "Category not found");
         }
         Category category = optionalCategory.get();
-        if(categoryUpdateDto.getName() != null && !categoryUpdateDto.getName().isEmpty() && categoryUpdateDto.getName().isBlank()){
+        if(categoryUpdateDto.getName() != null && !categoryUpdateDto.getName().isEmpty() && !categoryUpdateDto.getName().isBlank()){
             category.setName(categoryUpdateDto.getName());
         }
         categoryRepository.save(category);
@@ -66,6 +71,11 @@ public class CategoryServiveImpl implements CategoryService {
         Optional<Category> optionalCategory = categoryRepository.findById(id);
         if(optionalCategory.isEmpty()){
             return new ApiResponse(false, "Category not found");
+        }
+        List<Product> products = productRepository.findByCategoryId(id);
+        for (Product product : products) {
+            product.setCategory(null);
+            productRepository.save(product);
         }
         categoryRepository.delete(optionalCategory.get());
         return new ApiResponse(true, "Category deleted");

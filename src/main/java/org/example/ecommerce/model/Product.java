@@ -3,18 +3,18 @@ package org.example.ecommerce.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
-@Table(name = "categories")
+@Table(name = "products")
 @Data
-public class Category {
+public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private String description;
+    private double price;
 
-    @OneToMany
-    private List<Product> products = new ArrayList<>();
+    @ManyToOne(cascade = CascadeType.REMOVE)
+    private Category category;
+
 }
