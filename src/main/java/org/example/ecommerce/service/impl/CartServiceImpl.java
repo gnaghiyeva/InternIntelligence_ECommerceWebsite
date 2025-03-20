@@ -46,6 +46,7 @@ public class CartServiceImpl implements CartService {
         Cart cart = cartOptional.get();
         List<CartItemDto> cartItems = cart.getCartItems().stream()
                 .map(cartItem -> new CartItemDto(
+                        cartItem.getId(),
                         cartItem.getProduct().getId(),
                         cartItem.getProduct().getName(),
                         cartItem.getProduct().getPrice(),
